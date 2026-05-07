@@ -8,63 +8,63 @@ from contextlib import asynccontextmanager
 from fastapi import FastAPI, HTTPException
 from pydantic import BaseModel, Field, field_validator
 
-from config import CLASS_NAMES
-from predict import load_model, predict as classify_signal
+from config import NOMBRES_CLASES
+from predict import cargar_modelo, predecir as clasificar_senal
 
-_model = None
+_modelo = None
 
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
-    global _model
-    _model = load_model()
+    global _modelo
+    _modelo = cargar_modelo()
     yield
-    _model = None
+    _modelo = None
 
 
 app = FastAPI(
-    title="ECG Heartbeat Classifier",
-    description="Classifies a single ECG heartbeat into 5 arrhythmia categories (MIT-BIH).",
+    title="Clasificador de Latidos ECG",
+    description="Clasifica un único latido ECG en 5 categorías de arritmia (MIT-BIH).",
     version="1.0.0",
     lifespan=lifespan,
 )
 
 
-class HeartbeatRequest(BaseModel):
-    signal: list[float] = Field(..., description="187 normalised amplitude values of one heartbeat window")
+class PeticionLatido(BaseModel):
+    senal: list[float] = Field(..., description="187 valores de amplitud normalizados correspondientes a un latido")
 
-    @field_validator("signal")
+    @field_validator("senal")
     @classmethod
-    def check_length(cls, v):
+    def verificar_longitud(cls, v):
         if len(v) != 187:
-            raise ValueError(f"signal must have exactly 187 values, got {len(v)}")
+            raise ValueError(f"La señal debe tener exactamente 187 valores, se recibieron {len(v)}")
         return v
 
 
-class HeartbeatResponse(BaseModel):
-    predicted_class: int
-    label: str
-    probabilities: dict[str, float]
+class RespuestaLatido(BaseModel):
+    clase_predicha: int
+    etiqueta: str
+    probabilidades: dict[str, float]
 
 
-@app.get("/", tags=["health"])
-def root():
-    return {"status": "ok", "service": "ECG Heartbeat Classifier"}
+@app.get("/", tags=["estado"])
+def raiz():
+    return {"estado": "ok", "servicio": "Clasificador de Latidos ECG"}
 
 
-@app.get("/health", tags=["health"])
+@app.get("/health", tags=["estado"])
 def health():
-    return {"status": "ok"}
+    return {"estado": "ok"}
 
 
-@app.get("/classes", tags=["info"])
-def get_classes():
-    return CLASS_NAMES
+@app.get("/clases", tags=["informacion"])
+def obtener_clases():
+    return NOMBRES_CLASES
 
 
-@app.post("/predict", response_model=HeartbeatResponse, tags=["inference"])
-def predict(request: HeartbeatRequest):
-    if _model is None:
-        raise HTTPException(status_code=503, detail="Model not loaded")
-    result = classify_signal(request.signal, model=_model)
-    return result
+@app.post("/predecir", response_model=RespuestaLatido, tags=["inferencia"])
+def predecir(peticion: PeticionLatido):
+    if _modelo is None:
+        raise HTTPException(status_code=503, detail="Modelo no cargado")
+    resultado = clasificar_senal(peticion.senal, modelo=_modelo)
+    return resultado

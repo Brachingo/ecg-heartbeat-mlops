@@ -6,45 +6,44 @@ sys.path.insert(0, str(Path(__file__).parent.parent / "src"))
 import pytest
 import torch
 
-from model import ECGClassifier
+from model import ClasificadorECG
 
 
 @pytest.fixture
-def model():
-    return ECGClassifier(num_classes=5, input_size=187)
+def modelo():
+    return ClasificadorECG(num_clases=5, tamano_entrada=187)
 
 
-def test_output_shape(model):
+def test_forma_salida(modelo):
     x = torch.randn(8, 187)
-    out = model(x)
-    assert out.shape == (8, 5), f"Expected (8,5), got {out.shape}"
+    salida = modelo(x)
+    assert salida.shape == (8, 5), f"Se esperaba (8,5), se obtuvo {salida.shape}"
 
 
-def test_single_sample(model):
+def test_muestra_individual(modelo):
     x = torch.randn(1, 187)
-    out = model(x)
-    assert out.shape == (1, 5)
+    salida = modelo(x)
+    assert salida.shape == (1, 5)
 
 
-def test_output_is_logits(model):
+def test_salida_son_logits(modelo):
     x = torch.randn(4, 187)
-    out = model(x)
-    # Logits are not constrained to [0,1]
-    assert out.dtype == torch.float32
+    salida = modelo(x)
+    assert salida.dtype == torch.float32
 
 
-def test_different_batch_sizes(model):
+def test_diferentes_tamanos_batch(modelo):
     for bs in [1, 16, 64]:
         x = torch.randn(bs, 187)
-        out = model(x)
-        assert out.shape == (bs, 5)
+        salida = modelo(x)
+        assert salida.shape == (bs, 5)
 
 
-def test_grad_flows(model):
-    x = torch.randn(4, 187, requires_grad=False)
-    out = model(x)
-    loss = out.sum()
-    loss.backward()
-    for name, param in model.named_parameters():
+def test_flujo_gradientes(modelo):
+    x = torch.randn(4, 187)
+    salida = modelo(x)
+    perdida = salida.sum()
+    perdida.backward()
+    for nombre, param in modelo.named_parameters():
         if param.requires_grad:
-            assert param.grad is not None, f"No gradient for {name}"
+            assert param.grad is not None, f"Sin gradiente en {nombre}"

@@ -1,27 +1,27 @@
-# ECG Heartbeat Classifier — MLOps Final Project
+# Clasificador de Latidos ECG — Proyecto Final MLOps
 
-**Author:** Lucas Pérez  
-**Master:** Deep Learning — UPM  
-**Subject:** MLOps
+**Autor:** Lucas Pérez  
+**Máster:** Deep Learning — UPM  
+**Asignatura:** MLOps
 
-Classifies ECG heartbeats into 5 arrhythmia categories using a 1D-CNN trained on the MIT-BIH Arrhythmia dataset.
+Clasifica latidos ECG en 5 categorías de arritmia usando una CNN-1D entrenada sobre el dataset MIT-BIH Arrhythmia.
 
-| Class | Label |
-|-------|-------|
+| Clase | Etiqueta |
+|-------|----------|
 | 0 | Normal |
-| 1 | Supraventricular ectopic beat |
-| 2 | Ventricular ectopic beat |
-| 3 | Fusion beat |
-| 4 | Unknown / paced beat |
+| 1 | Latido ectópico supraventricular |
+| 2 | Latido ectópico ventricular |
+| 3 | Latido de fusión |
+| 4 | Desconocido / marcapasos |
 
 ---
 
-## Quickstart (local)
+## Inicio rápido (local)
 
-### 1. Clone & create environment
+### 1. Clonar el repositorio y crear el entorno
 
 ```bash
-git clone <repo-url>
+git clone <url-del-repo>
 cd ecg-heartbeat-mlops
 python -m venv .venv
 # Windows
@@ -29,40 +29,40 @@ python -m venv .venv
 pip install -r requirements.txt
 ```
 
-### 2. Download dataset
+### 2. Descargar el dataset
 
-Download the **ECG Heartbeat Categorization Dataset** from Kaggle:  
+Descarga el **ECG Heartbeat Categorization Dataset** de Kaggle:  
 <https://www.kaggle.com/datasets/shayanfazeli/heartbeat>
 
-Place `mitbih_train.csv` and `mitbih_test.csv` inside the `data/` folder.
+Coloca `mitbih_train.csv` y `mitbih_test.csv` dentro de la carpeta `data/`.
 
-### 3. Train
+### 3. Entrenar el modelo
 
 ```bash
 cd src
-python train.py --epochs 30 --batch_size 256 --lr 1e-3
+python train.py --epocas 30 --batch_size 256 --lr 1e-3
 ```
 
-The best checkpoint is saved to `models/ecg_classifier.pt`.  
-Training metrics and the confusion matrix are logged to W&B automatically.
+El mejor checkpoint se guarda en `models/ecg_clasificador.pt`.  
+Las métricas y la matriz de confusión se registran automáticamente en W&B.
 
-### 4. Run the API
+### 4. Lanzar la API
 
 ```bash
 uvicorn api.main:app --reload
 ```
 
-Docs available at <http://localhost:8000/docs>
+Documentación interactiva disponible en <http://localhost:8000/docs>
 
-#### Example request
+#### Ejemplo de petición
 
 ```bash
-curl -X POST http://localhost:8000/predict \
+curl -X POST http://localhost:8000/predecir \
   -H "Content-Type: application/json" \
-  -d '{"signal": [0.1, 0.2, ...]}'   # 187 values
+  -d '{"senal": [0.1, 0.2, ...]}'   # 187 valores
 ```
 
-### 5. Run tests
+### 5. Ejecutar los tests
 
 ```bash
 pytest tests/ -v
@@ -73,30 +73,30 @@ pytest tests/ -v
 ## Docker
 
 ```bash
-# Build & start
+# Construir e iniciar
 docker compose up --build
 
-# API available at http://localhost:8000
+# La API estará disponible en http://localhost:8000
 ```
 
 ---
 
 ## W&B
 
-- Project: `ecg-heartbeat-mlops`  
-- Link: _<add W&B project URL after first run>_
+- Proyecto: `ecg-heartbeat-mlops`  
+- Enlace: _<añadir URL del proyecto W&B tras el primer entrenamiento>_
 
 ---
 
-## Project structure
+## Estructura del proyecto
 
 ```
-├── api/           FastAPI service
-├── data/          CSV datasets (not tracked by git)
-├── models/        Trained checkpoints (not tracked by git)
-├── notebooks/     EDA & exploration
-├── src/           Training, dataset, model, predict
-├── tests/         pytest unit & integration tests
+├── api/           Servicio FastAPI
+├── data/          Datasets CSV (no versionados en git)
+├── models/        Checkpoints entrenados (no versionados en git)
+├── notebooks/     Exploración y análisis
+├── src/           Entrenamiento, dataset, modelo, predicción
+├── tests/         Tests unitarios e integración con pytest
 ├── Dockerfile
 ├── docker-compose.yml
 └── requirements.txt

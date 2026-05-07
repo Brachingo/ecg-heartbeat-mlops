@@ -4,7 +4,7 @@ services:
     ports:
       - "8000:8000"
     volumes:
-      - ./models:/app/models   # mount trained checkpoint without rebuilding
+      - ./models:/app/models   # monta el checkpoint entrenado sin reconstruir la imagen
     environment:
       - PYTHONPATH=/app/src
     restart: unless-stopped

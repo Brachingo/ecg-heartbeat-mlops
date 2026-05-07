@@ -2,11 +2,11 @@ FROM python:3.11-slim
 
 WORKDIR /app
 
-# Install dependencies first (layer cache)
+# Instalar dependencias primero (aprovecha la caché de capas)
 COPY requirements.txt .
 RUN pip install --no-cache-dir -r requirements.txt
 
-# Copy source
+# Copiar código fuente
 COPY src/ ./src/
 COPY api/ ./api/
 COPY models/ ./models/

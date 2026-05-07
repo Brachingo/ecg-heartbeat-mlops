@@ -3,48 +3,48 @@ from pathlib import Path
 import numpy as np
 import torch
 
-from config import CLASS_NAMES, TrainConfig
-from model import ECGClassifier
+from config import NOMBRES_CLASES, ConfigEntrenamiento
+from model import ClasificadorECG
 
 
-def load_model(model_path: str | Path | None = None, device: str | None = None) -> ECGClassifier:
-    cfg = TrainConfig()
-    path = Path(model_path) if model_path else cfg.model_dir / cfg.model_name
-    dev = torch.device(device or ("cuda" if torch.cuda.is_available() else "cpu"))
+def cargar_modelo(ruta_modelo: str | Path | None = None, dispositivo: str | None = None) -> ClasificadorECG:
+    cfg = ConfigEntrenamiento()
+    ruta = Path(ruta_modelo) if ruta_modelo else cfg.directorio_modelos / cfg.nombre_modelo
+    dev = torch.device(dispositivo or ("cuda" if torch.cuda.is_available() else "cpu"))
 
-    model = ECGClassifier(num_classes=cfg.num_classes, input_size=cfg.input_size)
-    model.load_state_dict(torch.load(path, map_location=dev))
-    model.to(dev)
-    model.eval()
-    return model
+    modelo = ClasificadorECG(num_clases=cfg.num_clases, tamano_entrada=cfg.tamano_entrada)
+    modelo.load_state_dict(torch.load(ruta, map_location=dev))
+    modelo.to(dev)
+    modelo.eval()
+    return modelo
 
 
-def predict(signal: list[float], model: ECGClassifier | None = None) -> dict:
+def predecir(senal: list[float], modelo: ClasificadorECG | None = None) -> dict:
     """
-    Classify a single ECG heartbeat.
+    Clasifica un único latido ECG.
 
-    Parameters
+    Parámetros
     ----------
-    signal : list of 187 float values (one heartbeat window)
-    model  : optional pre-loaded model (avoids reloading on every call)
+    senal  : lista de 187 valores float (una ventana de un latido normalizado)
+    modelo : modelo precargado opcional (evita recargarlo en cada llamada)
 
-    Returns
-    -------
-    dict with keys: predicted_class (int), label (str), probabilities (list[float])
+    Devuelve
+    --------
+    dict con claves: clase_predicha (int), etiqueta (str), probabilidades (dict)
     """
-    if model is None:
-        model = load_model()
+    if modelo is None:
+        modelo = cargar_modelo()
 
-    device = next(model.parameters()).device
-    x = torch.tensor(signal, dtype=torch.float32).unsqueeze(0).to(device)  # (1, 187)
+    dispositivo = next(modelo.parameters()).device
+    x = torch.tensor(senal, dtype=torch.float32).unsqueeze(0).to(dispositivo)  # (1, 187)
 
     with torch.no_grad():
-        logits = model(x)
+        logits = modelo(x)
         probs = torch.softmax(logits, dim=1).squeeze().cpu().tolist()
 
-    predicted_class = int(np.argmax(probs))
+    clase_predicha = int(np.argmax(probs))
     return {
-        "predicted_class": predicted_class,
-        "label": CLASS_NAMES[predicted_class],
-        "probabilities": {CLASS_NAMES[i]: round(p, 4) for i, p in enumerate(probs)},
+        "clase_predicha": clase_predicha,
+        "etiqueta": NOMBRES_CLASES[clase_predicha],
+        "probabilidades": {NOMBRES_CLASES[i]: round(p, 4) for i, p in enumerate(probs)},
     }

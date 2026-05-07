@@ -7,53 +7,58 @@ sys.path.insert(0, str(Path(__file__).parent.parent / "src"))
 import pytest
 from fastapi.testclient import TestClient
 
-# Patch load_model so tests don't need a trained checkpoint
-with patch("api.main.load_model", return_value=MagicMock()):
+# Se parchea cargar_modelo para que los tests no necesiten un checkpoint entrenado
+with patch("api.main.cargar_modelo", return_value=MagicMock()):
     from api.main import app
 
-client = TestClient(app)
+cliente = TestClient(app)
 
-VALID_SIGNAL = [0.0] * 187
+SENAL_VALIDA = [0.0] * 187
 
 
 def test_health():
-    r = client.get("/health")
+    r = cliente.get("/health")
     assert r.status_code == 200
-    assert r.json()["status"] == "ok"
+    assert r.json()["estado"] == "ok"
 
 
-def test_root():
-    r = client.get("/")
+def test_raiz():
+    r = cliente.get("/")
     assert r.status_code == 200
 
 
-def test_classes_endpoint():
-    r = client.get("/classes")
+def test_endpoint_clases():
+    r = cliente.get("/clases")
     assert r.status_code == 200
-    data = r.json()
-    assert "0" in data or 0 in data
+    datos = r.json()
+    assert "0" in datos or 0 in datos
 
 
-def test_predict_wrong_length():
-    r = client.post("/predict", json={"signal": [0.0] * 100})
+def test_predecir_longitud_incorrecta():
+    r = cliente.post("/predecir", json={"senal": [0.0] * 100})
     assert r.status_code == 422
 
 
-def test_predict_empty_signal():
-    r = client.post("/predict", json={"signal": []})
+def test_predecir_senal_vacia():
+    r = cliente.post("/predecir", json={"senal": []})
     assert r.status_code == 422
 
 
-def test_predict_valid_signal():
-    fake_result = {
-        "predicted_class": 0,
-        "label": "Normal",
-        "probabilities": {"Normal": 0.9, "Supraventricular": 0.05,
-                          "Ventricular": 0.02, "Fusion": 0.02, "Unknown": 0.01},
+def test_predecir_senal_valida():
+    resultado_falso = {
+        "clase_predicha": 0,
+        "etiqueta": "Normal",
+        "probabilidades": {
+            "Normal": 0.9,
+            "Supraventricular": 0.05,
+            "Ventricular": 0.02,
+            "Fusion": 0.02,
+            "Desconocido": 0.01,
+        },
     }
-    with patch("api.main.classify_signal", return_value=fake_result):
-        r = client.post("/predict", json={"signal": VALID_SIGNAL})
+    with patch("api.main.clasificar_senal", return_value=resultado_falso):
+        r = cliente.post("/predecir", json={"senal": SENAL_VALIDA})
     assert r.status_code == 200
-    body = r.json()
-    assert body["label"] == "Normal"
-    assert "probabilities" in body
+    cuerpo = r.json()
+    assert cuerpo["etiqueta"] == "Normal"
+    assert "probabilidades" in cuerpo

@@ -1,38 +1,38 @@
-from dataclasses import dataclass, field
+from dataclasses import dataclass
 from pathlib import Path
 
-ROOT_DIR = Path(__file__).parent.parent
+DIR_RAIZ = Path(__file__).parent.parent
 
 @dataclass
-class TrainConfig:
-    # Data
-    data_dir: Path = ROOT_DIR / "data"
-    train_file: str = "mitbih_train.csv"
-    test_file: str = "mitbih_test.csv"
+class ConfigEntrenamiento:
+    # Datos
+    directorio_datos: Path = DIR_RAIZ / "data"
+    archivo_entrenamiento: str = "mitbih_train.csv"
+    archivo_test: str = "mitbih_test.csv"
 
-    # Model
-    num_classes: int = 5
-    input_size: int = 187
+    # Modelo
+    num_clases: int = 5
+    tamano_entrada: int = 187
 
-    # Training
-    epochs: int = 30
+    # Entrenamiento
+    epocas: int = 30
     batch_size: int = 256
-    learning_rate: float = 1e-3
+    tasa_aprendizaje: float = 1e-3
     weight_decay: float = 1e-4
-    val_split: float = 0.1
+    proporcion_validacion: float = 0.1
 
-    # Checkpointing
-    model_dir: Path = ROOT_DIR / "models"
-    model_name: str = "ecg_classifier.pt"
+    # Guardado del modelo
+    directorio_modelos: Path = DIR_RAIZ / "models"
+    nombre_modelo: str = "ecg_clasificador.pt"
 
     # W&B
-    wandb_project: str = "ecg-heartbeat-mlops"
-    wandb_entity: str | None = None  # set to your W&B username if needed
+    wandb_proyecto: str = "ecg-heartbeat-mlops"
+    wandb_entidad: str | None = None  # pon tu usuario de W&B si es necesario
 
-CLASS_NAMES = {
+NOMBRES_CLASES = {
     0: "Normal",
     1: "Supraventricular",
     2: "Ventricular",
     3: "Fusion",
-    4: "Unknown",
+    4: "Desconocido",
 }
