@@ -1,0 +1,9 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(python *)",
+      "Bash(python3 *)",
+      "PowerShell(python -c \"import fitz; doc = fitz.open\\('C:/Users/lucas/Desktop/MSc/Mod_3/ML_Ops/Final/MLOps-Enunciado-Proyecto.pdf'\\); text = ''.join\\([page.get_text\\(\\) for page in doc]\\); print\\(text\\)\")"
+    ]
+  }
+}

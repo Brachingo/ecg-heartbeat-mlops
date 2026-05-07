@@ -1,0 +1,10 @@
+services:
+  api:
+    build: .
+    ports:
+      - "8000:8000"
+    volumes:
+      - ./models:/app/models   # mount trained checkpoint without rebuilding
+    environment:
+      - PYTHONPATH=/app/src
+    restart: unless-stopped

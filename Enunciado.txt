@@ -1,0 +1,35 @@
+En este enunciado se expone el trabajo final de la asignatura “MLOps”. En esta práctica se 
+aplicarán los conocimientos adquiridos durante la asignatura a un proyecto previamente 
+desarrollado durante el máster. 
+Temática del proyecto 
+Para la práctica se puede elegir cualquier proyecto de ML/DL desarrollado para otra 
+asignatura del máster. El objetivo es aplicar las metodologías, buenas prácticas y 
+herramientas de MLOps vistas durante esta asignatura, siguiendo el mismo proceso que el 
+realizado durante las clases. Este proyecto se podrá realizar de manera individual o por 
+parejas. En particular, debe contener los siguientes requisitos: 
+• 
+• 
+• 
+• 
+• 
+Modelo de ML o DL que resuelva un problema o preste un servicio particular: 
+o Seleccionando ya un modelo usado y trabajado para otra asignatura. 
+o O cualquier otro reto/problema de libre elección. 
+Estructura de proyecto de ML, incluyendo el notebook, código (entrenamiento, API 
+y tests) o datos, entre otros. 
+Versionado a través de un repositorio público en GitHub, incluyendo un README. 
+Contenedorización con Docker del servicio o la aplicación. 
+W&B Report que incluya un análisis de un experimento relacionado con el proyecto. 
+El report usará componentes de W&B vistos en clase. 
+Entrega 
+El proyecto a entregar debe ser un archivo comprimido con el nombre ApellidoNombre con 
+el proyecto de MLOps (sin carpetas como venv o .git). Debe incluir un README básico 
+documentando brevemente las principales funcionalidades y cómo configurar/lanzar el proyecto 
+para un entorno local de desarrollo. Además, dicho README deberá identificar al autor o los 
+autores del proyecto. Finalmente, en el cuerpo de la tarea/entrega se debe indicar: 
+• 
+• 
+• 
+Enlace al proyecto en GitHub. 
+Enlace al proyecto en Weight & Biases. 
+Endpoint accesible con el servicio/aplicación en producción.
