@@ -4,16 +4,39 @@
 **Máster:** Deep Learning — UPM  
 **Asignatura:** MLOps
 
-Clasifica latidos ECG en 5 categorías de arritmia usando una CNN-1D entrenada sobre el dataset MIT-BIH Arrhythmia.
+Proyecto de clasificación de latidos ECG en 5 categorías de arritmia usando una CNN-1D entrenada sobre el dataset MIT-BIH Arrhythmia Database. El objetivo es construir un pipeline MLOps completo que cubra desde la ingesta y preprocesado de datos hasta el despliegue y monitorización del modelo.
 
-| Clase | Etiqueta |
-|-------|----------|
-| 0 | Normal |
-| 1 | Latido ectópico supraventricular |
-| 2 | Latido ectópico ventricular |
-| 3 | Latido de fusión |
-| 4 | Desconocido / marcapasos |
+#### Descripción del problema
 
+Las arritmias cardíacas son alteraciones del ritmo cardíaco que pueden comprometer gravemente la salud del paciente. La detección automática a partir de señales ECG permite asistir al clínico en el diagnóstico temprano y reducir la carga de revisión manual de registros.
+
+Cada muestra del dataset representa un latido individual segmentado como una señal de 187 puntos temporales, etiquetada en una de las siguientes categorías:
+
+| Clase | Etiqueta | Descripción |
+|-------|----------|-------------|
+| 0 | Normal | Latido sinusal normal |
+| 1 | Supraventricular | Arritmia de origen auricular |
+| 2 | Ventricular | Arritmia de origen ventricular |
+| 3 | Fusión | Latido de fusión ventrículo-sinusal |
+| 4 | Desconocido | No clasificable en las categorías anteriores |
+
+---
+
+#### Dataset
+
+El dataset utilizado es el **MIT-BIH Arrhythmia Database**, preprocesado y disponible en Kaggle. Contiene ~110.000 muestras de entrenamiento y ~22.000 de test con una marcada distribución desbalanceada, dominada por la clase Normal.
+
+---
+
+#### Visualización de señales
+
+Ejemplos representativos de señales ECG para cada clase:
+
+![Señales ECG por clase](images/ecg_signals.png)
+
+Señal media ± 1 desviación estándar por clase, que muestra los patrones morfológicos característicos de cada arritmia:
+
+![Señal media por clase](images/ecg_signals_mean.png)
 ---
 
 ## Inicio rápido (local)
@@ -21,12 +44,8 @@ Clasifica latidos ECG en 5 categorías de arritmia usando una CNN-1D entrenada s
 ### 1. Clonar el repositorio y crear el entorno
 
 ```bash
-git clone <url-del-repo>
+git clone https://github.com/Brachingo/ecg-heartbeat-mlops
 cd ecg-heartbeat-mlops
-python -m venv .venv
-# Windows
-.venv\Scripts\activate
-pip install -r requirements.txt
 ```
 
 ### 2. Descargar el dataset
@@ -52,16 +71,6 @@ Las métricas y la matriz de confusión se registran automáticamente en W&B.
 uvicorn api.main:app --reload
 ```
 
-Documentación interactiva disponible en <http://localhost:8000/docs>
-
-#### Ejemplo de petición
-
-```bash
-curl -X POST http://localhost:8000/predecir \
-  -H "Content-Type: application/json" \
-  -d '{"senal": [0.1, 0.2, ...]}'   # 187 valores
-```
-
 ### 5. Ejecutar los tests
 
 ```bash
@@ -84,7 +93,7 @@ docker compose up --build
 ## W&B
 
 - Proyecto: `ecg-heartbeat-mlops`  
-- Enlace: _<añadir URL del proyecto W&B tras el primer entrenamiento>_
+- Enlace: [W&B - Brachi-UPM](https://wandb.ai/brachi-upm/ecg-classification/artifacts/dataset/ecg-raw)
 
 ---
 
@@ -97,6 +106,7 @@ docker compose up --build
 ├── notebooks/     Exploración y análisis
 ├── src/           Entrenamiento, dataset, modelo, predicción
 ├── tests/         Tests unitarios e integración con pytest
+├── images/        Imágenes y gráficos del proyecto
 ├── Dockerfile
 ├── docker-compose.yml
 └── requirements.txt

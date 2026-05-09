@@ -1,4 +1,5 @@
 import argparse
+from pathlib import Path
 
 import torch
 import torch.nn as nn
@@ -8,6 +9,20 @@ from sklearn.metrics import classification_report
 from config import ConfigEntrenamiento
 from dataset import obtener_cargadores
 from model import ClasificadorECG
+
+
+def descargar_artifact(nombre_artifact: str, cfg: ConfigEntrenamiento) -> tuple[Path, Path]:
+    """Descarga el artifact de W&B y devuelve las rutas de train y test."""
+    # Necesitamos un run temporal solo para descargar
+    run = wandb.init(
+        project=cfg.wandb_proyecto,
+        entity=cfg.wandb_entidad,
+        job_type="descarga-datos",
+    )
+    artifact = run.use_artifact(f"{nombre_artifact}:latest")
+    directorio = Path(artifact.download())
+    run.finish()
+    return directorio / "train.csv", directorio / "test.csv"
 
 
 def evaluar(modelo, cargador, criterio, dispositivo):
@@ -28,15 +43,19 @@ def evaluar(modelo, cargador, criterio, dispositivo):
     return perdida_total / total, correctos / total, todas_predicciones, todas_etiquetas
 
 
-def entrenar(cfg: ConfigEntrenamiento):
+def entrenar(cfg: ConfigEntrenamiento, nombre_artifact: str):
     dispositivo = torch.device("cuda" if torch.cuda.is_available() else "cpu")
     print(f"Dispositivo utilizado: {dispositivo}")
+    print(f"Dataset: {nombre_artifact}")
 
     cfg.directorio_modelos.mkdir(parents=True, exist_ok=True)
 
+    print("Descargando dataset desde W&B...")
+    ruta_train, ruta_test = descargar_artifact(nombre_artifact, cfg)
+
     cargador_entren, cargador_val, cargador_test = obtener_cargadores(
-        cfg.directorio_datos / cfg.archivo_entrenamiento,
-        cfg.directorio_datos / cfg.archivo_test,
+        ruta_train,
+        ruta_test,
         batch_size=cfg.batch_size,
         proporcion_validacion=cfg.proporcion_validacion,
     )
@@ -46,18 +65,24 @@ def entrenar(cfg: ConfigEntrenamiento):
     optimizador = torch.optim.Adam(modelo.parameters(), lr=cfg.tasa_aprendizaje, weight_decay=cfg.weight_decay)
     planificador = torch.optim.lr_scheduler.CosineAnnealingLR(optimizador, T_max=cfg.epocas)
 
+    # El nombre del run incluye el dataset para distinguirlos en W&B
     ejecucion = wandb.init(
         project=cfg.wandb_proyecto,
         entity=cfg.wandb_entidad,
+        name=f"entrenamiento-{nombre_artifact}",
+        job_type="entrenamiento",
         config={
             "epocas": cfg.epocas,
             "batch_size": cfg.batch_size,
             "tasa_aprendizaje": cfg.tasa_aprendizaje,
             "weight_decay": cfg.weight_decay,
             "arquitectura": "CNN-1D",
-            "dataset": "MIT-BIH Arritmia",
+            "dataset": nombre_artifact,
         },
     )
+
+    # Vincular el artifact usado a este run de entrenamiento
+    ejecucion.use_artifact(f"{nombre_artifact}:latest")
     wandb.watch(modelo, log="all", log_freq=100)
 
     mejor_precision_val = 0.0
@@ -120,7 +145,9 @@ def entrenar(cfg: ConfigEntrenamiento):
         ),
     })
 
-    artefacto = wandb.Artifact("ecg-modelo", type="model")
+    # Guardar modelo como artifact vinculado al dataset usado
+    nombre_modelo_artifact = f"ecg-modelo-{nombre_artifact}"
+    artefacto = wandb.Artifact(nombre_modelo_artifact, type="model")
     artefacto.add_file(str(cfg.directorio_modelos / cfg.nombre_modelo))
     ejecucion.log_artifact(artefacto)
     ejecucion.finish()
@@ -128,6 +155,13 @@ def entrenar(cfg: ConfigEntrenamiento):
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description="Entrenar el clasificador de latidos ECG")
+    parser.add_argument(
+        "--dataset",
+        type=str,
+        default="mitbih-original",
+        choices=["mitbih-original", "mitbih-balanceado"],
+        help="Nombre del artifact de W&B a usar como dataset",
+    )
     parser.add_argument("--epocas", type=int, default=None)
     parser.add_argument("--batch_size", type=int, default=None)
     parser.add_argument("--lr", type=float, default=None)
@@ -141,4 +175,4 @@ if __name__ == "__main__":
     if args.lr:
         cfg.tasa_aprendizaje = args.lr
 
-    entrenar(cfg)
+    entrenar(cfg, nombre_artifact=args.dataset)
