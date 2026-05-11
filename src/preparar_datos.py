@@ -98,8 +98,8 @@ def subir_artifact(
 ) -> None:
     directorio_tmp.mkdir(parents=True, exist_ok=True)
 
-    ruta_train = directorio_tmp / f"{nombre}_train.csv"
-    ruta_test = directorio_tmp / f"{nombre}_test.csv"
+    ruta_train = directorio_tmp / f"train.csv"
+    ruta_test = directorio_tmp / f"test.csv"
     df_train.to_csv(ruta_train, index=False, header=False)
     df_test.to_csv(ruta_test, index=False, header=False)
 
