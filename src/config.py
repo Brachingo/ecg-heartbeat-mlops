@@ -26,7 +26,7 @@ class ConfigEntrenamiento:
     nombre_modelo: str = "ecg_clasificador.pt"
 
     # W&B
-    wandb_proyecto: str = "ecg-heartbeat-mlops"
+    wandb_proyecto: str = "ecg-classification"
     wandb_entidad: str | None = None  # pon tu usuario de W&B si es necesario
 
 NOMBRES_CLASES = {
