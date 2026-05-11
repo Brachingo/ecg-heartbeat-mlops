@@ -8,171 +8,121 @@ from sklearn.metrics import classification_report
 
 from config import ConfigEntrenamiento
 from dataset import obtener_cargadores
-from model import ClasificadorECG
+from src.model_cnn import ClasificadorECG
 
 
-def descargar_artifact(nombre_artifact: str, cfg: ConfigEntrenamiento) -> tuple[Path, Path]:
-    """Descarga el artifact de W&B y devuelve las rutas de train y test."""
-    # Necesitamos un run temporal solo para descargar
-    run = wandb.init(
-        project=cfg.wandb_proyecto,
-        entity=cfg.wandb_entidad,
-        job_type="descarga-datos",
-    )
-    artifact = run.use_artifact(f"{nombre_artifact}:latest")
-    directorio = Path(artifact.download())
-    run.finish()
-    return directorio / "train.csv", directorio / "test.csv"
+def evaluate(model, loader, criterion, device):
+    model.eval()
+    total_loss, correct, total = 0.0, 0, 0
+    all_preds, all_labels = [], []
 
-
-def evaluar(modelo, cargador, criterio, dispositivo):
-    modelo.eval()
-    perdida_total, correctos, total = 0.0, 0, 0
-    todas_predicciones, todas_etiquetas = [], []
     with torch.no_grad():
-        for X, y in cargador:
-            X, y = X.to(dispositivo), y.to(dispositivo)
-            logits = modelo(X)
-            perdida = criterio(logits, y)
-            perdida_total += perdida.item() * len(y)
-            predicciones = logits.argmax(dim=1)
-            correctos += (predicciones == y).sum().item()
+        for X, y in loader:
+            X, y = X.to(device), y.to(device)
+            logits = model(X)
+            total_loss += criterion(logits, y).item() * len(y)
+            preds = logits.argmax(dim=1)
+            correct += (preds == y).sum().item()
             total += len(y)
-            todas_predicciones.extend(predicciones.cpu().tolist())
-            todas_etiquetas.extend(y.cpu().tolist())
-    return perdida_total / total, correctos / total, todas_predicciones, todas_etiquetas
+            all_preds.extend(preds.cpu().tolist())
+            all_labels.extend(y.cpu().tolist())
+
+    return total_loss / total, correct / total, all_preds, all_labels
 
 
-def entrenar(cfg: ConfigEntrenamiento, nombre_artifact: str):
-    dispositivo = torch.device("cuda" if torch.cuda.is_available() else "cpu")
-    print(f"Dispositivo utilizado: {dispositivo}")
-    print(f"Dataset: {nombre_artifact}")
-
+def train(cfg: ConfigEntrenamiento, dataset: str):
+    device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
     cfg.directorio_modelos.mkdir(parents=True, exist_ok=True)
 
-    print("Descargando dataset desde W&B...")
-    ruta_train, ruta_test = descargar_artifact(nombre_artifact, cfg)
+    # Descargar el artifact del dataset desde W&B
+    run = wandb.init(project=cfg.wandb_proyecto, entity=cfg.wandb_entidad,
+                     name=f"train-{dataset}", job_type="train",
+                     config={"epochs": cfg.epocas, "batch_size": cfg.batch_size,
+                             "lr": cfg.tasa_aprendizaje, "dataset": dataset})
 
-    cargador_entren, cargador_val, cargador_test = obtener_cargadores(
-        ruta_train,
-        ruta_test,
+    artifact = run.use_artifact(f"{dataset}:latest")
+    data_dir = Path(artifact.download())
+
+    train_loader, val_loader, test_loader = obtener_cargadores(
+        data_dir / "train.csv",
+        data_dir / "test.csv",
         batch_size=cfg.batch_size,
         proporcion_validacion=cfg.proporcion_validacion,
     )
 
-    modelo = ClasificadorECG(num_clases=cfg.num_clases, tamano_entrada=cfg.tamano_entrada).to(dispositivo)
-    criterio = nn.CrossEntropyLoss()
-    optimizador = torch.optim.Adam(modelo.parameters(), lr=cfg.tasa_aprendizaje, weight_decay=cfg.weight_decay)
-    planificador = torch.optim.lr_scheduler.CosineAnnealingLR(optimizador, T_max=cfg.epocas)
+    model = ClasificadorECG(num_clases=cfg.num_clases, tamano_entrada=cfg.tamano_entrada).to(device)
+    criterion = nn.CrossEntropyLoss()
+    optimizer = torch.optim.Adam(model.parameters(), lr=cfg.tasa_aprendizaje, weight_decay=cfg.weight_decay)
+    scheduler = torch.optim.lr_scheduler.CosineAnnealingLR(optimizer, T_max=cfg.epocas)
 
-    # El nombre del run incluye el dataset para distinguirlos en W&B
-    ejecucion = wandb.init(
-        project=cfg.wandb_proyecto,
-        entity=cfg.wandb_entidad,
-        name=f"entrenamiento-{nombre_artifact}",
-        job_type="entrenamiento",
-        config={
-            "epocas": cfg.epocas,
-            "batch_size": cfg.batch_size,
-            "tasa_aprendizaje": cfg.tasa_aprendizaje,
-            "weight_decay": cfg.weight_decay,
-            "arquitectura": "CNN-1D",
-            "dataset": nombre_artifact,
-        },
-    )
+    best_val_acc = 0.0
 
-    # Vincular el artifact usado a este run de entrenamiento
-    ejecucion.use_artifact(f"{nombre_artifact}:latest")
-    wandb.watch(modelo, log="all", log_freq=100)
+    for epoch in range(1, cfg.epocas + 1):
+        model.train()
+        train_loss, correct, total = 0.0, 0, 0
 
-    mejor_precision_val = 0.0
-    for epoca in range(1, cfg.epocas + 1):
-        modelo.train()
-        perdida_entren, correctos_entren, total_entren = 0.0, 0, 0
+        for X, y in train_loader:
+            X, y = X.to(device), y.to(device)
+            optimizer.zero_grad()
+            logits = model(X)
+            loss = criterion(logits, y)
+            loss.backward()
+            optimizer.step()
 
-        for X, y in cargador_entren:
-            X, y = X.to(dispositivo), y.to(dispositivo)
-            optimizador.zero_grad()
-            logits = modelo(X)
-            perdida = criterio(logits, y)
-            perdida.backward()
-            optimizador.step()
+            train_loss += loss.item() * len(y)
+            correct += (logits.argmax(1) == y).sum().item()
+            total += len(y)
 
-            perdida_entren += perdida.item() * len(y)
-            correctos_entren += (logits.argmax(1) == y).sum().item()
-            total_entren += len(y)
+        scheduler.step()
 
-        planificador.step()
+        val_loss, val_acc, _, _ = evaluate(model, val_loader, criterion, device)
+        train_acc = correct / total
 
-        perdida_val, precision_val, _, _ = evaluar(modelo, cargador_val, criterio, dispositivo)
-        precision_entren = correctos_entren / total_entren
+        print(f"Época {epoch:03d}/{cfg.epocas} | "
+              f"train_loss={train_loss/total:.4f} train_acc={train_acc:.4f} | "
+              f"val_loss={val_loss:.4f} val_acc={val_acc:.4f}")
 
-        print(
-            f"Época {epoca:03d}/{cfg.epocas} | "
-            f"perdida_entren={perdida_entren/total_entren:.4f} prec_entren={precision_entren:.4f} | "
-            f"perdida_val={perdida_val:.4f} prec_val={precision_val:.4f}"
-        )
+        wandb.log({"epoch": epoch,
+                   "train/loss": train_loss / total, "train/acc": train_acc,
+                   "val/loss": val_loss, "val/acc": val_acc,
+                   "lr": scheduler.get_last_lr()[0]})
 
-        wandb.log({
-            "epoca": epoca,
-            "entrenamiento/perdida": perdida_entren / total_entren,
-            "entrenamiento/precision": precision_entren,
-            "validacion/perdida": perdida_val,
-            "validacion/precision": precision_val,
-            "tasa_aprendizaje": planificador.get_last_lr()[0],
-        })
+        if val_acc > best_val_acc:
+            best_val_acc = val_acc
+            torch.save(model.state_dict(), cfg.directorio_modelos / cfg.nombre_modelo)
+            print(f"  → Modelo guardado (val_acc={val_acc:.4f})")
 
-        if precision_val > mejor_precision_val:
-            mejor_precision_val = precision_val
-            torch.save(modelo.state_dict(), cfg.directorio_modelos / cfg.nombre_modelo)
-            print(f"  → Mejor modelo guardado (prec_val={precision_val:.4f})")
+    # Evaluación final en test
+    model.load_state_dict(torch.load(cfg.directorio_modelos / cfg.nombre_modelo, map_location=device))
+    test_loss, test_acc, preds, labels = evaluate(model, test_loader, criterion, device)
+    print(f"\nTest — loss={test_loss:.4f}  acc={test_acc:.4f}")
+    print(classification_report(labels, preds,
+          target_names=["Normal", "Supraventricular", "Ventricular", "Fusion", "Desconocido"]))
 
-    # Evaluación final en el conjunto de test
-    modelo.load_state_dict(torch.load(cfg.directorio_modelos / cfg.nombre_modelo, map_location=dispositivo))
-    perdida_test, precision_test, predicciones, etiquetas = evaluar(modelo, cargador_test, criterio, dispositivo)
-    print(f"\nTest  perdida={perdida_test:.4f}  precision={precision_test:.4f}")
-    print(classification_report(
-        etiquetas, predicciones,
-        target_names=["Normal", "Supraventricular", "Ventricular", "Fusion", "Desconocido"]
-    ))
+    wandb.log({"test/loss": test_loss, "test/acc": test_acc,
+               "test/confusion_matrix": wandb.plot.confusion_matrix(
+                   probs=None, y_true=labels, preds=preds,
+                   class_names=["Normal", "Supraventricular", "Ventricular", "Fusion", "Desconocido"])})
 
-    wandb.log({
-        "test/perdida": perdida_test,
-        "test/precision": precision_test,
-        "test/matriz_confusion": wandb.plot.confusion_matrix(
-            probs=None, y_true=etiquetas, preds=predicciones,
-            class_names=["Normal", "Supraventricular", "Ventricular", "Fusion", "Desconocido"],
-        ),
-    })
-
-    # Guardar modelo como artifact vinculado al dataset usado
-    nombre_modelo_artifact = f"ecg-modelo-{nombre_artifact}"
-    artefacto = wandb.Artifact(nombre_modelo_artifact, type="model")
-    artefacto.add_file(str(cfg.directorio_modelos / cfg.nombre_modelo))
-    ejecucion.log_artifact(artefacto)
-    ejecucion.finish()
+    # Subir modelo como artifact
+    model_artifact = wandb.Artifact(f"ecg-model-{dataset}", type="model")
+    model_artifact.add_file(str(cfg.directorio_modelos / cfg.nombre_modelo))
+    run.log_artifact(model_artifact)
+    run.finish()
 
 
 if __name__ == "__main__":
-    parser = argparse.ArgumentParser(description="Entrenar el clasificador de latidos ECG")
-    parser.add_argument(
-        "--dataset",
-        type=str,
-        default="mitbih-original",
-        choices=["mitbih-original", "mitbih-balanceado"],
-        help="Nombre del artifact de W&B a usar como dataset",
-    )
+    parser = argparse.ArgumentParser()
+    parser.add_argument("--dataset", type=str, default="mitbih-original",
+                        choices=["mitbih-original", "mitbih-balanceado"])
     parser.add_argument("--epocas", type=int, default=None)
     parser.add_argument("--batch_size", type=int, default=None)
     parser.add_argument("--lr", type=float, default=None)
     args = parser.parse_args()
 
     cfg = ConfigEntrenamiento()
-    if args.epocas:
-        cfg.epocas = args.epocas
-    if args.batch_size:
-        cfg.batch_size = args.batch_size
-    if args.lr:
-        cfg.tasa_aprendizaje = args.lr
+    if args.epocas:     cfg.epocas = args.epocas
+    if args.batch_size: cfg.batch_size = args.batch_size
+    if args.lr:         cfg.tasa_aprendizaje = args.lr
 
-    entrenar(cfg, nombre_artifact=args.dataset)
+    train(cfg, dataset=args.dataset)

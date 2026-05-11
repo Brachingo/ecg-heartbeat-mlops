@@ -4,7 +4,7 @@ import numpy as np
 import torch
 
 from config import NOMBRES_CLASES, ConfigEntrenamiento
-from model import ClasificadorECG
+from src.model_cnn import ClasificadorECG
 
 
 def cargar_modelo(ruta_modelo: str | Path | None = None, dispositivo: str | None = None) -> ClasificadorECG:
