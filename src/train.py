@@ -8,8 +8,8 @@ from sklearn.metrics import classification_report
 
 from config import ConfigEntrenamiento
 from dataset import obtener_cargadores
-from src.model_cnn import ClasificadorECG
-
+from model_cnn import ClasificadorCNN
+from model_gru import ClasificadorGRU
 
 def evaluate(model, loader, criterion, device):
     model.eval()
@@ -50,7 +50,7 @@ def train(cfg: ConfigEntrenamiento, dataset: str):
         proporcion_validacion=cfg.proporcion_validacion,
     )
 
-    model = ClasificadorECG(num_clases=cfg.num_clases, tamano_entrada=cfg.tamano_entrada).to(device)
+    model = ClasificadorCNN(num_clases=cfg.num_clases, tamano_entrada=cfg.tamano_entrada).to(device) if cfg.model == "CNN" else ClasificadorGRU(num_clases=cfg.num_clases, tamano_entrada=cfg.tamano_entrada).to(device)
     criterion = nn.CrossEntropyLoss()
     optimizer = torch.optim.Adam(model.parameters(), lr=cfg.tasa_aprendizaje, weight_decay=cfg.weight_decay)
     scheduler = torch.optim.lr_scheduler.CosineAnnealingLR(optimizer, T_max=cfg.epocas)
@@ -113,16 +113,18 @@ def train(cfg: ConfigEntrenamiento, dataset: str):
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
-    parser.add_argument("--dataset", type=str, default="mitbih-original",
-                        choices=["mitbih-original", "mitbih-balanceado"])
-    parser.add_argument("--epocas", type=int, default=None)
-    parser.add_argument("--batch_size", type=int, default=None)
-    parser.add_argument("--lr", type=float, default=None)
+    parser.add_argument("--dataset", type=str, default="mitbih-raw",
+                        choices=["mitbih-raw", "mitbih-balanced"], help="Dataset a usar (raw o balanced)")
+    parser.add_argument("--model", type=str, default="GRU", choices=["CNN", "GRU"], help="Arquitectura del modelo (CNN o GRU)")
+    parser.add_argument("--epocas", type=int, default=None, help="Cantidad de épocas para entrenar")
+    parser.add_argument("--batch_size", type=int, default=None, help="Tamaño del batch para entrenamiento")
+    parser.add_argument("--lr", type=float, default=None, help="Tasa de aprendizaje para el optimizador")
     args = parser.parse_args()
 
     cfg = ConfigEntrenamiento()
+    cfg.model = args.model
     if args.epocas:     cfg.epocas = args.epocas
     if args.batch_size: cfg.batch_size = args.batch_size
     if args.lr:         cfg.tasa_aprendizaje = args.lr
 
-    train(cfg, dataset=args.dataset)
+    train(cfg, args.dataset)

@@ -5,8 +5,8 @@ import torch
 import torch.nn as nn
 
 
-class CNNGRUModel(nn.Module):
-    def __init__(self):
+class ClasificadorGRU(nn.Module):
+    def __init__(self, num_clases: int = 5, tamano_entrada: int = 187):
         super().__init__()
         self.cnn = nn.Sequential(
             nn.Conv1d(1,  32, kernel_size=7, padding=3), nn.BatchNorm1d(32), nn.ReLU(), nn.MaxPool1d(2),
@@ -17,7 +17,7 @@ class CNNGRUModel(nn.Module):
         self.classifier = nn.Sequential(
             nn.Linear(128, 64), nn.ReLU(), nn.Dropout(0.3),
             #nn.Linear(64, 32), nn.ReLU(), nn.Dropout(0.3), Usado para el modelo de 3 capas
-            nn.Linear(64, 5),
+            nn.Linear(64, num_clases),
         )
 
     def forward(self, x):

@@ -16,14 +16,16 @@ np.random.seed(42)
 COL_NAMES = [f"t{i}" for i in range(187)] + ["label"]
 
 
-def cargar_datos(ruta_train, ruta_test):
-    df_train = pd.read_csv(ruta_train, header=None, names=COL_NAMES)
+def cargar_datos(cfg: ConfigEntrenamiento):
+    ruta_entren = cfg.directorio_datos / cfg.archivo_entrenamiento
+    ruta_test = cfg.directorio_datos / cfg.archivo_test
+    df_train = pd.read_csv(ruta_entren, header=None, names=COL_NAMES)
     df_test  = pd.read_csv(ruta_test,  header=None, names=COL_NAMES)
     df_train["label"] = df_train["label"].astype(int)
     df_test["label"]  = df_test["label"].astype(int)
     return df_train, df_test
 
-df_train, df_test = cargar_datos("data/mitbih_train.csv", "data/mitbih_test.csv")
+df_train, df_test = cargar_datos(ConfigEntrenamiento)
 
 def balancear_datos(df_train):
     df_majority = df_train[df_train["label"] == 0]
@@ -42,10 +44,10 @@ def balancear_datos(df_train):
 
 df_train_balanceado = balancear_datos(df_train)
 
-run = wandb.init(project="ecg-classification")
+run = wandb.init(project="ecg-heartbeat-mlops")
 
 artifact = wandb.Artifact(
-    name="ecg-balanceado",
+    name="mitbih-balanced",
     type="dataset",
     description="Dataset ECG balanceado con submuestreo de la clase Normal al 65% del total de minoritarias.",
     metadata={
@@ -57,12 +59,12 @@ artifact = wandb.Artifact(
 )
 
 with tempfile.TemporaryDirectory() as tmpdir:
-    train_path = os.path.join(tmpdir, "train_balanced.csv")
-    test_path  = os.path.join(tmpdir, "test_balanced.csv")
+    train_path = os.path.join(tmpdir, "train.csv")
+    test_path  = os.path.join(tmpdir, "test.csv")
     df_train_balanceado.to_csv(train_path, index=False, header=False)
     df_test.to_csv(test_path,  index=False, header=False)
-    artifact.add_file(train_path, name="train_balanced.csv")
-    artifact.add_file(test_path,  name="test_balanced.csv")
+    artifact.add_file(train_path, name="train.csv")
+    artifact.add_file(test_path,  name="test.csv")
     run.log_artifact(artifact)
 
 run.finish()

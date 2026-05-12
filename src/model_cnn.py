@@ -2,7 +2,7 @@ import torch
 import torch.nn as nn
 
 
-class ClasificadorECG(nn.Module):
+class ClasificadorCNN(nn.Module):
     """CNN-1D para clasificación de latidos ECG (MIT-BIH, 5 clases)."""
 
     def __init__(self, num_clases: int = 5, tamano_entrada: int = 187):
