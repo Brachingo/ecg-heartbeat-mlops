@@ -12,7 +12,9 @@ models/*.pt
 models/*.pth
 
 # W&B local cache
-wandb/
+/src/wandb/
+/src/wandb/
+/src/artifacts/
 
 # Jupyter
 .ipynb_checkpoints/

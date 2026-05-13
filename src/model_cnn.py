@@ -28,6 +28,6 @@ class ClasificadorCNN(nn.Module):
         )
 
     def forward(self, x: torch.Tensor) -> torch.Tensor:
-        #x = x.unsqueeze(1)
+        x = x.unsqueeze(1)
         x = self.features(x)
         return self.classifier(x)

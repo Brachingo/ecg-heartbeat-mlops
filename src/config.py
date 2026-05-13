@@ -15,7 +15,7 @@ class ConfigEntrenamiento:
     tamano_entrada: int = 187
 
     # Entrenamiento
-    model: str = "GRU"  # o "CNN"
+    arq: str = "CNN"  # o "GRU"
     epocas: int = 30
     batch_size: int = 256
     tasa_aprendizaje: float = 1e-3
@@ -28,7 +28,9 @@ class ConfigEntrenamiento:
 
     # W&B
     wandb_proyecto: str = "ecg-heartbeat-mlops"
-    wandb_entidad: str | None = None  # pon tu usuario de W&B si es necesario
+    wandb_entidad: str  = "brachi-upm"
+    artefacto_dataset: str = "mitbih:latest"
+    artefacto_modelo: str = "ecg_model:v0"
 
 NOMBRES_CLASES = {
     0: "Normal",

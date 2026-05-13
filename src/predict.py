@@ -4,22 +4,23 @@ import numpy as np
 import torch
 
 from config import NOMBRES_CLASES, ConfigEntrenamiento
-from src.model_cnn import ClasificadorECG
+from src.model_cnn import ClasificadorCNN
+from src.model_gru import ClasificadorGRU
 
 
-def cargar_modelo(ruta_modelo: str | Path | None = None, dispositivo: str | None = None) -> ClasificadorECG:
+def cargar_modelo(ruta_modelo: str | Path | None = None, dispositivo: str | None = None):
     cfg = ConfigEntrenamiento()
     ruta = Path(ruta_modelo) if ruta_modelo else cfg.directorio_modelos / cfg.nombre_modelo
     dev = torch.device(dispositivo or ("cuda" if torch.cuda.is_available() else "cpu"))
 
-    modelo = ClasificadorECG(num_clases=cfg.num_clases, tamano_entrada=cfg.tamano_entrada)
+    modelo = ClasificadorCNN(num_clases=cfg.num_clases, tamano_entrada=cfg.tamano_entrada) if cfg.arq == "CNN" else ClasificadorGRU(num_clases=cfg.num_clases, tamano_entrada=cfg.tamano_entrada)
     modelo.load_state_dict(torch.load(ruta, map_location=dev))
     modelo.to(dev)
     modelo.eval()
     return modelo
 
 
-def predecir(senal: list[float], modelo: ClasificadorECG | None = None) -> dict:
+def predecir(senal: list[float], modelo) -> dict:
     """
     Clasifica un único latido ECG.
 

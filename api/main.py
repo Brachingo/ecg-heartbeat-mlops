@@ -1,6 +1,5 @@
 import sys
 from pathlib import Path
-
 sys.path.insert(0, str(Path(__file__).parent.parent / "src"))
 
 from contextlib import asynccontextmanager
@@ -8,11 +7,12 @@ from contextlib import asynccontextmanager
 from fastapi import FastAPI, HTTPException
 from pydantic import BaseModel, Field, field_validator
 
-from config import NOMBRES_CLASES
+from config import NOMBRES_CLASES, ConfigEntrenamiento
+cfg = ConfigEntrenamiento()
+
 from predict import cargar_modelo, predecir as clasificar_senal
 
 _modelo = None
-
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
@@ -24,20 +24,22 @@ async def lifespan(app: FastAPI):
 
 app = FastAPI(
     title="Clasificador de Latidos ECG",
-    description="Clasifica un único latido ECG en 5 categorías de arritmia (MIT-BIH).",
+    description=f"Clasifica un único latido ECG en {cfg.num_clases} categorías de arritmia (MIT-BIH).",
     version="1.0.0",
     lifespan=lifespan,
 )
 
 
 class PeticionLatido(BaseModel):
-    senal: list[float] = Field(..., description="187 valores de amplitud normalizados correspondientes a un latido")
+    senal: list[float] = Field(..., description=f"{cfg.tamano_entrada} valores de amplitud normalizados correspondientes a un latido")
 
     @field_validator("senal")
     @classmethod
     def verificar_longitud(cls, v):
         if len(v) != 187:
-            raise ValueError(f"La señal debe tener exactamente 187 valores, se recibieron {len(v)}")
+            raise ValueError(
+                f"La señal debe tener exactamente {cfg.tamano_entrada} valores, se recibieron {len(v)}"
+            )
         return v
 
 
@@ -68,3 +70,8 @@ def predecir(peticion: PeticionLatido):
         raise HTTPException(status_code=503, detail="Modelo no cargado")
     resultado = clasificar_senal(peticion.senal, modelo=_modelo)
     return resultado
+
+
+if __name__ == "__main__":
+    import uvicorn
+    uvicorn.run(app, host="0.0.0.0", port=8000)

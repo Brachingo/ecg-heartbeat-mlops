@@ -9,12 +9,12 @@ import tempfile
 
 sys.path.insert(0, str(Path(__file__).parent))
 from config import ConfigEntrenamiento, NOMBRES_CLASES
-
+cfg = ConfigEntrenamiento()
 np.random.seed(42)
 
 COL_NAMES = [f"t{i}" for i in range(187)] + ["label"]
 
-def cargar_datos(cfg: ConfigEntrenamiento):
+def cargar_datos():
     ruta_entren = cfg.directorio_datos / cfg.archivo_entrenamiento
     ruta_test = cfg.directorio_datos / cfg.archivo_test
     df_train = pd.read_csv(ruta_entren, header=None, names=COL_NAMES)
@@ -23,19 +23,20 @@ def cargar_datos(cfg: ConfigEntrenamiento):
     df_test["label"]  = df_test["label"].astype(int)
     return df_train, df_test
 
-df_train, df_test = cargar_datos(ConfigEntrenamiento)
+df_train, df_test = cargar_datos()
 
-run = wandb.init(project="ecg-heartbeat-mlops")
+run = wandb.init(project="ecg-heartbeat-mlops", name="dataset", config={"dataset": "raw"})
 
 artifact = wandb.Artifact(
-    name="mitbih-raw",
+    name="mitbih",
     type="dataset",
     description="Dataset ECG sin balancear, con distribución original de clases para balanceo de pesos",
     metadata={
+        "dataset": "raw",
         "muestras_train": len(df_train),
         "muestras_test":  len(df_test),
-        "num_clases": 5,
-        "caracteristicas": 187
+        "num_clases": cfg.num_clases,
+        "caracteristicas": cfg.tamano_entrada
     }
 )
 
