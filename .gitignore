@@ -10,6 +10,7 @@ env/
 data/
 models/*.pt
 models/*.pth
+artifacts/
 
 # W&B local cache
 /src/wandb/

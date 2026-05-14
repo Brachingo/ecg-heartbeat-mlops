@@ -1,0 +1,57 @@
+[34m[1mwandb[0m: Downloading large artifact 'mitbih:v1', 109.24MB. 2 files...
+[34m[1mwandb[0m:   2 of 2 files downloaded.  
+Done. 00:00:00.6 (179.1MB/s)
+Época 001/30 | train_loss=1.4195 train_acc=0.3783 | val_loss=1.2386 val_acc=0.4711
+  → Modelo guardado (val_acc=0.4711)
+Época 002/30 | train_loss=0.9762 train_acc=0.6234 | val_loss=0.7903 val_acc=0.6463
+  → Modelo guardado (val_acc=0.6463)
+Época 003/30 | train_loss=0.6252 train_acc=0.7692 | val_loss=0.5646 val_acc=0.7862
+  → Modelo guardado (val_acc=0.7862)
+Época 004/30 | train_loss=0.4546 train_acc=0.8469 | val_loss=0.4615 val_acc=0.8577
+  → Modelo guardado (val_acc=0.8577)
+Época 005/30 | train_loss=0.3698 train_acc=0.8811 | val_loss=0.3613 val_acc=0.8963
+  → Modelo guardado (val_acc=0.8963)
+Época 006/30 | train_loss=0.3356 train_acc=0.8899 | val_loss=0.4393 val_acc=0.8682
+Época 007/30 | train_loss=0.2894 train_acc=0.9058 | val_loss=0.2610 val_acc=0.9260
+  → Modelo guardado (val_acc=0.9260)
+Época 008/30 | train_loss=0.2821 train_acc=0.9042 | val_loss=0.3482 val_acc=0.8903
+Época 009/30 | train_loss=0.2552 train_acc=0.9122 | val_loss=0.2627 val_acc=0.9212
+Época 010/30 | train_loss=0.2274 train_acc=0.9215 | val_loss=0.3163 val_acc=0.9031
+Época 011/30 | train_loss=0.2089 train_acc=0.9277 | val_loss=0.2342 val_acc=0.9236
+Época 012/30 | train_loss=0.2017 train_acc=0.9308 | val_loss=0.2550 val_acc=0.9196
+Época 013/30 | train_loss=0.1855 train_acc=0.9373 | val_loss=0.2330 val_acc=0.9317
+  → Modelo guardado (val_acc=0.9317)
+Época 014/30 | train_loss=0.1732 train_acc=0.9428 | val_loss=0.2538 val_acc=0.9212
+Época 015/30 | train_loss=0.1535 train_acc=0.9506 | val_loss=0.2180 val_acc=0.9341
+  → Modelo guardado (val_acc=0.9341)
+Época 016/30 | train_loss=0.1478 train_acc=0.9508 | val_loss=0.2017 val_acc=0.9453
+  → Modelo guardado (val_acc=0.9453)
+Época 017/30 | train_loss=0.1488 train_acc=0.9519 | val_loss=0.2070 val_acc=0.9393
+Época 018/30 | train_loss=0.1412 train_acc=0.9547 | val_loss=0.1961 val_acc=0.9457
+  → Modelo guardado (val_acc=0.9457)
+Época 019/30 | train_loss=0.1330 train_acc=0.9579 | val_loss=0.2000 val_acc=0.9421
+Época 020/30 | train_loss=0.1135 train_acc=0.9636 | val_loss=0.2119 val_acc=0.9381
+Época 021/30 | train_loss=0.1129 train_acc=0.9658 | val_loss=0.2041 val_acc=0.9413
+Época 022/30 | train_loss=0.1063 train_acc=0.9666 | val_loss=0.1981 val_acc=0.9445
+Época 023/30 | train_loss=0.1076 train_acc=0.9679 | val_loss=0.1983 val_acc=0.9441
+Época 024/30 | train_loss=0.0974 train_acc=0.9709 | val_loss=0.1927 val_acc=0.9445
+Época 025/30 | train_loss=0.0946 train_acc=0.9731 | val_loss=0.1940 val_acc=0.9441
+Época 026/30 | train_loss=0.0939 train_acc=0.9739 | val_loss=0.1904 val_acc=0.9482
+  → Modelo guardado (val_acc=0.9482)
+Época 027/30 | train_loss=0.0882 train_acc=0.9738 | val_loss=0.1942 val_acc=0.9461
+Época 028/30 | train_loss=0.0883 train_acc=0.9745 | val_loss=0.1928 val_acc=0.9457
+Época 029/30 | train_loss=0.0900 train_acc=0.9747 | val_loss=0.1914 val_acc=0.9473
+Época 030/30 | train_loss=0.0826 train_acc=0.9768 | val_loss=0.1934 val_acc=0.9469
+
+Test — loss=0.1991  acc=0.9382
+                  precision    recall  f1-score   support
+
+          Normal       0.99      0.94      0.96     18118
+Supraventricular       0.37      0.83      0.51       556
+     Ventricular       0.86      0.96      0.91      1448
+          Fusion       0.48      0.87      0.62       162
+     Desconocido       0.95      0.99      0.97      1608
+
+        accuracy                           0.94     21892
+       macro avg       0.73      0.92      0.79     21892
+    weighted avg       0.96      0.94      0.95     21892

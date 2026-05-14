@@ -1,0 +1,36 @@
+Traceback (most recent call last):
+  File "C:\Users\lucas\Desktop\MSc\Mod_3\ML_Ops\Final\src\preprocess_simple.py", line 33, in <module>
+    artifact.add_file(df_train.to_csv(index=False, header=False), name="train_raw.csv")
+  File "C:\Users\lucas\miniconda3\envs\mlops\Lib\site-packages\wandb\sdk\artifacts\_validators.py", line 272, in wrapper
+    return method(self, *args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\lucas\miniconda3\envs\mlops\Lib\site-packages\wandb\sdk\artifacts\artifact.py", line 1479, in add_file
+    raise ValueError(f"Path is not a file: {local_path!r}")
+Error in sys.excepthook:
+Traceback (most recent call last):
+  File "C:\Users\lucas\miniconda3\envs\mlops\Lib\site-packages\wandb\sdk\lib\exit_hooks.py", line 54, in exc_handler
+    traceback.print_exception(exc_type, exc, tb)
+  File "C:\Users\lucas\miniconda3\envs\mlops\Lib\traceback.py", line 125, in print_exception
+    te.print(file=file, chain=chain)
+  File "C:\Users\lucas\miniconda3\envs\mlops\Lib\traceback.py", line 1022, in print
+    print(line, file=file, end="")
+  File "C:\Users\lucas\miniconda3\envs\mlops\Lib\site-packages\wandb\sdk\lib\console_capture.py", line 184, in write_with_callbacks
+    n = orig_write(s)
+        ^^^^^^^^^^^^^
+KeyboardInterrupt
+
+Original exception was:
+Traceback (most recent call last):
+  File "C:\Users\lucas\Desktop\MSc\Mod_3\ML_Ops\Final\src\preprocess_simple.py", line 33, in <module>
+    artifact.add_file(df_train.to_csv(index=False, header=False), name="train_raw.csv")
+  File "C:\Users\lucas\miniconda3\envs\mlops\Lib\site-packages\wandb\sdk\artifacts\_validators.py", line 272, in wrapper
+    return method(self, *args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\lucas\miniconda3\envs\mlops\Lib\site-packages\wandb\sdk\artifacts\artifact.py", line 1479, in add_file
+    raise ValueError(f"Path is not a file: {local_path!r}")
+ValueError: Exception ignored in: <module 'threading' from 'C:\\Users\\lucas\\miniconda3\\envs\\mlops\\Lib\\threading.py'>
+Traceback (most recent call last):
+  File "C:\Users\lucas\miniconda3\envs\mlops\Lib\threading.py", line 1541, in _shutdown
+    def _shutdown():
+
+KeyboardInterrupt:

@@ -1,0 +1,48 @@
+[34m[1mwandb[0m: Downloading large artifact 'mitbih:v0', 254.27MB. 2 files...
+[34m[1mwandb[0m:   2 of 2 files downloaded.  
+Done. 00:00:00.7 (387.6MB/s)
+Época 001/20 | train_loss=1.0056 train_acc=0.5947 | val_loss=0.6977 val_acc=0.7661
+  → Modelo guardado (val_acc=0.7661)
+Época 002/20 | train_loss=0.4321 train_acc=0.8554 | val_loss=0.3856 val_acc=0.8738
+  → Modelo guardado (val_acc=0.8738)
+Época 003/20 | train_loss=0.2787 train_acc=0.9067 | val_loss=0.2961 val_acc=0.9069
+  → Modelo guardado (val_acc=0.9069)
+Época 004/20 | train_loss=0.2197 train_acc=0.9259 | val_loss=0.3435 val_acc=0.8772
+Época 005/20 | train_loss=0.1731 train_acc=0.9410 | val_loss=0.2688 val_acc=0.9071
+  → Modelo guardado (val_acc=0.9071)
+Época 006/20 | train_loss=0.1429 train_acc=0.9503 | val_loss=0.3152 val_acc=0.8810
+Época 007/20 | train_loss=0.1282 train_acc=0.9555 | val_loss=0.1582 val_acc=0.9462
+  → Modelo guardado (val_acc=0.9462)
+Época 008/20 | train_loss=0.1131 train_acc=0.9618 | val_loss=0.3203 val_acc=0.8785
+Época 009/20 | train_loss=0.0938 train_acc=0.9683 | val_loss=0.1351 val_acc=0.9497
+  → Modelo guardado (val_acc=0.9497)
+Época 010/20 | train_loss=0.0881 train_acc=0.9714 | val_loss=0.1582 val_acc=0.9417
+Época 011/20 | train_loss=0.0744 train_acc=0.9754 | val_loss=0.1606 val_acc=0.9440
+Época 012/20 | train_loss=0.0634 train_acc=0.9790 | val_loss=0.1477 val_acc=0.9479
+Época 013/20 | train_loss=0.0573 train_acc=0.9813 | val_loss=0.1348 val_acc=0.9534
+  → Modelo guardado (val_acc=0.9534)
+Época 014/20 | train_loss=0.0515 train_acc=0.9842 | val_loss=0.1339 val_acc=0.9571
+  → Modelo guardado (val_acc=0.9571)
+Época 015/20 | train_loss=0.0477 train_acc=0.9848 | val_loss=0.1304 val_acc=0.9585
+  → Modelo guardado (val_acc=0.9585)
+Época 016/20 | train_loss=0.0411 train_acc=0.9874 | val_loss=0.1332 val_acc=0.9598
+  → Modelo guardado (val_acc=0.9598)
+Época 017/20 | train_loss=0.0368 train_acc=0.9889 | val_loss=0.1187 val_acc=0.9650
+  → Modelo guardado (val_acc=0.9650)
+Época 018/20 | train_loss=0.0346 train_acc=0.9898 | val_loss=0.1259 val_acc=0.9637
+Época 019/20 | train_loss=0.0334 train_acc=0.9909 | val_loss=0.1167 val_acc=0.9681
+  → Modelo guardado (val_acc=0.9681)
+Época 020/20 | train_loss=0.0322 train_acc=0.9917 | val_loss=0.1187 val_acc=0.9670
+
+Test — loss=0.1231  acc=0.9657
+                  precision    recall  f1-score   support
+
+          Normal       0.99      0.97      0.98     18118
+Supraventricular       0.56      0.85      0.67       556
+     Ventricular       0.91      0.96      0.93      1448
+          Fusion       0.64      0.84      0.73       162
+     Desconocido       0.98      0.98      0.98      1608
+
+        accuracy                           0.97     21892
+       macro avg       0.81      0.92      0.86     21892
+    weighted avg       0.97      0.97      0.97     21892

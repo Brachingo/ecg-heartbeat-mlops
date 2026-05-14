@@ -1,0 +1,112 @@
+_wandb:
+    value:
+        cli_version: 0.26.1
+        e:
+            6jx19bv0k22ycx18zbuqh1z2o6wolx1w:
+                args:
+                    - --nombre
+                    - gru-bal-25ep-lr5e4
+                    - --arquitectura
+                    - GRU
+                    - --dataset
+                    - mitbih:v1
+                    - --epocas
+                    - "25"
+                    - --lr
+                    - "0.0005"
+                codePath: src\train.py
+                codePathLocal: src\train.py
+                cpu_count: 6
+                cpu_count_logical: 12
+                cudaVersion: "13.1"
+                disk:
+                    /:
+                        total: "499226284032"
+                        used: "489405788160"
+                email: lucassperez04@gmail.com
+                executable: C:\Users\lucas\miniconda3\envs\mlops\python.exe
+                git:
+                    commit: 64fe2dd6d88ad762a6e92d28b54d5eb487c413d7
+                    remote: https://github.com/Brachingo/ecg-heartbeat-mlops.git
+                gpu: NVIDIA GeForce GTX 1660 SUPER
+                gpu_count: 1
+                gpu_nvidia:
+                    - architecture: Turing
+                      cudaCores: 1408
+                      memoryTotal: "6442450944"
+                      name: NVIDIA GeForce GTX 1660 SUPER
+                      uuid: GPU-47065985-09fa-2e7e-fb13-3e4ced9e6dd5
+                host: Torre-Guille
+                memory:
+                    total: "17126916096"
+                os: Windows-10-10.0.22631-SP0
+                program: C:\Users\lucas\Desktop\MSc\Mod_3\ML_Ops\Final\src\train.py
+                python: CPython 3.11.15
+                root: C:\Users\lucas\Desktop\MSc\Mod_3\ML_Ops\Final
+                startedAt: "2026-05-14T21:23:00.242165Z"
+                writerId: 6jx19bv0k22ycx18zbuqh1z2o6wolx1w
+        m: []
+        python_version: 3.11.15
+        t:
+            "1":
+                - 1
+                - 5
+                - 53
+            "2":
+                - 1
+                - 5
+                - 53
+            "3":
+                - 2
+                - 13
+                - 16
+            "4": 3.11.15
+            "5": 0.26.1
+            "8":
+                - 2
+                - 3
+            "12": 0.26.1
+            "13": windows-amd64
+        visualize:
+            test/confusion_matrix:
+                panel_config:
+                    fieldSettings:
+                        Actual: Actual
+                        Predicted: Predicted
+                        nPredictions: nPredictions
+                    panelDefId: wandb/confusion_matrix/v1
+                    stringSettings:
+                        title: Confusion Matrix Curve
+                    transform:
+                        name: tableWithLeafColNames
+                    userQuery:
+                        queryFields:
+                            - args:
+                                - name: runSets
+                                  value: ${runSets}
+                              fields:
+                                - fields: []
+                                  name: id
+                                - fields: []
+                                  name: name
+                                - fields: []
+                                  name: _defaultColorIndex
+                                - args:
+                                    - name: tableKey
+                                      value: test/confusion_matrix_table
+                                  fields: []
+                                  name: summaryTable
+                              name: runSets
+                panel_type: Vega2
+arq:
+    value: GRU
+batch_size:
+    value: 256
+dataset:
+    value: mitbih:v1
+epochs:
+    value: 25
+lr:
+    value: 0.0005
+weight_decay:
+    value: 0.0001

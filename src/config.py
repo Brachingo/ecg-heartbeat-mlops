@@ -29,6 +29,7 @@ class ConfigEntrenamiento:
     # W&B
     wandb_proyecto: str = "ecg-heartbeat-mlops"
     wandb_entidad: str  = "brachi-upm"
+    nombre_run: str = "run"
     artefacto_dataset: str = "mitbih:latest"
     artefacto_modelo: str = "ecg_model:v0"
 

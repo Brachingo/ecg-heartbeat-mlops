@@ -1,0 +1,54 @@
+_wandb:
+    value:
+        cli_version: 0.26.1
+        e:
+            2ndv76n6v5932l2okvdvvl69snau2j6r:
+                codePath: src\preprocess_balanceado.py
+                codePathLocal: src\preprocess_balanceado.py
+                cpu_count: 6
+                cpu_count_logical: 12
+                cudaVersion: "13.1"
+                disk:
+                    /:
+                        total: "499226284032"
+                        used: "493994000384"
+                email: lucassperez04@gmail.com
+                executable: C:\Users\lucas\miniconda3\envs\mlops\python.exe
+                git:
+                    commit: 4097360de14d0b856a0280f3a88b366af744cc1f
+                    remote: https://github.com/Brachingo/ecg-heartbeat-mlops.git
+                gpu: NVIDIA GeForce GTX 1660 SUPER
+                gpu_count: 1
+                gpu_nvidia:
+                    - architecture: Turing
+                      cudaCores: 1408
+                      memoryTotal: "6442450944"
+                      name: NVIDIA GeForce GTX 1660 SUPER
+                      uuid: GPU-47065985-09fa-2e7e-fb13-3e4ced9e6dd5
+                host: Torre-Guille
+                memory:
+                    total: "17126916096"
+                os: Windows-10-10.0.22631-SP0
+                program: C:\Users\lucas\Desktop\MSc\Mod_3\ML_Ops\Final\src\preprocess_balanceado.py
+                python: CPython 3.11.15
+                root: C:\Users\lucas\Desktop\MSc\Mod_3\ML_Ops\Final
+                startedAt: "2026-05-09T17:45:47.344263Z"
+                writerId: 2ndv76n6v5932l2okvdvvl69snau2j6r
+        m: []
+        python_version: 3.11.15
+        t:
+            "1":
+                - 5
+                - 53
+            "2":
+                - 5
+                - 53
+            "3":
+                - 2
+            "4": 3.11.15
+            "5": 0.26.1
+            "8":
+                - 2
+                - 3
+            "12": 0.26.1
+            "13": windows-amd64

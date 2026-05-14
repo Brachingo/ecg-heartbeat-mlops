@@ -1,0 +1,40 @@
+[34m[1mwandb[0m: Downloading large artifact 'mitbih:v1', 109.24MB. 2 files...
+[34m[1mwandb[0m:   2 of 2 files downloaded.  
+Done. 00:00:00.6 (194.0MB/s)
+Época 001/15 | train_loss=0.4433 train_acc=0.8312 | val_loss=0.2827 val_acc=0.9043
+  → Modelo guardado (val_acc=0.9043)
+Época 002/15 | train_loss=0.2379 train_acc=0.9152 | val_loss=0.2044 val_acc=0.9289
+  → Modelo guardado (val_acc=0.9289)
+Época 003/15 | train_loss=0.1893 train_acc=0.9339 | val_loss=0.2155 val_acc=0.9313
+  → Modelo guardado (val_acc=0.9313)
+Época 004/15 | train_loss=0.1501 train_acc=0.9484 | val_loss=0.1753 val_acc=0.9421
+  → Modelo guardado (val_acc=0.9421)
+Época 005/15 | train_loss=0.1301 train_acc=0.9546 | val_loss=0.1720 val_acc=0.9381
+Época 006/15 | train_loss=0.1101 train_acc=0.9624 | val_loss=0.1833 val_acc=0.9405
+Época 007/15 | train_loss=0.0925 train_acc=0.9681 | val_loss=0.1449 val_acc=0.9534
+  → Modelo guardado (val_acc=0.9534)
+Época 008/15 | train_loss=0.0870 train_acc=0.9706 | val_loss=0.1522 val_acc=0.9461
+Época 009/15 | train_loss=0.0747 train_acc=0.9754 | val_loss=0.1397 val_acc=0.9538
+  → Modelo guardado (val_acc=0.9538)
+Época 010/15 | train_loss=0.0594 train_acc=0.9815 | val_loss=0.1431 val_acc=0.9518
+Época 011/15 | train_loss=0.0496 train_acc=0.9849 | val_loss=0.1337 val_acc=0.9598
+  → Modelo guardado (val_acc=0.9598)
+Época 012/15 | train_loss=0.0456 train_acc=0.9854 | val_loss=0.1359 val_acc=0.9550
+Época 013/15 | train_loss=0.0381 train_acc=0.9903 | val_loss=0.1313 val_acc=0.9606
+  → Modelo guardado (val_acc=0.9606)
+Época 014/15 | train_loss=0.0434 train_acc=0.9894 | val_loss=0.1279 val_acc=0.9618
+  → Modelo guardado (val_acc=0.9618)
+Época 015/15 | train_loss=0.0407 train_acc=0.9900 | val_loss=0.1282 val_acc=0.9618
+
+Test — loss=0.1141  acc=0.9619
+                  precision    recall  f1-score   support
+
+          Normal       0.99      0.96      0.98     18118
+Supraventricular       0.55      0.87      0.67       556
+     Ventricular       0.89      0.96      0.92      1448
+          Fusion       0.54      0.91      0.68       162
+     Desconocido       0.97      0.99      0.98      1608
+
+        accuracy                           0.96     21892
+       macro avg       0.79      0.94      0.85     21892
+    weighted avg       0.97      0.96      0.97     21892

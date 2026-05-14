@@ -31,14 +31,14 @@ def evaluate(model, loader, criterion, device):
 
 
 def train(cfg: ConfigEntrenamiento):
-    device = torch.device("cpu")    # "cuda" if torch.cuda.is_available() else "cpu")
+    device = torch.device("cuda")    # "cuda" if torch.cuda.is_available() else "cpu")
     cfg.directorio_modelos.mkdir(parents=True, exist_ok=True)
 
     # Descargar el artifact del dataset desde W&B
-    config={"dataset": cfg.artefacto_dataset, "arq": cfg.arq, "epochs": cfg.epocas, "batch_size": cfg.batch_size,
-                             "lr": cfg.tasa_aprendizaje}
+    config={"dataset": cfg.artefacto_dataset, "arq": cfg.arq, "epochs": cfg.epocas,
+            "batch_size": cfg.batch_size, "lr": cfg.tasa_aprendizaje, "weight_decay": cfg.weight_decay}
     run = wandb.init(project=cfg.wandb_proyecto, entity=cfg.wandb_entidad,
-                     name="train", job_type="train",
+                     name=cfg.nombre_run, job_type="train",
                      config=config)
 
     artifact = run.use_artifact(f"{cfg.artefacto_dataset}")
@@ -107,7 +107,7 @@ def train(cfg: ConfigEntrenamiento):
 
     # Subir modelo como artifact
     config["val_acc"] = best_val_acc
-    model_artifact = wandb.Artifact(f"ecg-model", type="model", metadata=config)
+    model_artifact = wandb.Artifact(f"ecg-model-{cfg.nombre_run}", type="model", metadata=config)
     model_artifact.add_file(str(cfg.directorio_modelos / cfg.nombre_modelo))
     run.log_artifact(model_artifact)
     run.finish()
@@ -115,18 +115,22 @@ def train(cfg: ConfigEntrenamiento):
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
+    parser.add_argument("--nombre", type=str, default=None, help="Nombre del run en W&B")
     parser.add_argument("--dataset", type=str, default=None, help="Artefacto del dataset a usar incluida la versión (por defecto se usará la última versión disponible)")
     parser.add_argument("--arquitectura", type=str, default=None, help="Arquitectura del modelo a entrenar (CNN o GRU)")
     parser.add_argument("--epocas", type=int, default=None, help="Cantidad de épocas para entrenar")
     parser.add_argument("--batch_size", type=int, default=None, help="Tamaño del batch para entrenamiento")
     parser.add_argument("--lr", type=float, default=None, help="Tasa de aprendizaje para el optimizador")
+    parser.add_argument("--weight_decay", type=float, default=None, help="Weight decay del optimizador Adam")
     args = parser.parse_args()
 
     cfg = ConfigEntrenamiento()
-    if args.dataset:    cfg.artefacto_dataset = args.dataset
-    if args.arquitectura:        cfg.arq = args.arquitectura
-    if args.epocas:     cfg.epocas = args.epocas
-    if args.batch_size: cfg.batch_size = args.batch_size
-    if args.lr:         cfg.tasa_aprendizaje = args.lr
+    if args.nombre:      cfg.nombre_run = args.nombre
+    if args.dataset:     cfg.artefacto_dataset = args.dataset
+    if args.arquitectura: cfg.arq = args.arquitectura
+    if args.epocas:      cfg.epocas = args.epocas
+    if args.batch_size:  cfg.batch_size = args.batch_size
+    if args.lr:           cfg.tasa_aprendizaje = args.lr
+    if args.weight_decay: cfg.weight_decay = args.weight_decay
 
     train(cfg)

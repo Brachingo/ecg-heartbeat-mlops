@@ -56,7 +56,8 @@ def test_predecir_senal_valida():
             "Desconocido": 0.01,
         },
     }
-    with patch("api.main.clasificar_senal", return_value=resultado_falso):
+    with patch("api.main.clasificar_senal", return_value=resultado_falso), \
+         patch("api.main._modelo", MagicMock()):
         r = cliente.post("/predecir", json={"senal": SENAL_VALIDA})
     assert r.status_code == 200
     cuerpo = r.json()
