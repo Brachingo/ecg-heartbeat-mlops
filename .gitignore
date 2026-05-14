@@ -16,6 +16,7 @@ artifacts/
 /src/wandb/
 /src/wandb/
 /src/artifacts/
+wandb/
 
 # Jupyter
 .ipynb_checkpoints/
