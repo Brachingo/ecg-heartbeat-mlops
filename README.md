@@ -56,10 +56,10 @@ Descarga el **ECG Heartbeat Categorization Dataset** de Kaggle:
 Coloca `mitbih_train.csv` y `mitbih_test.csv` dentro de la carpeta `data/`.
 
 ### 3. Entrenar el modelo
-
+Define tus modelos en `run_experiments.py` y corre el archivo
 ```bash
 cd src
-python train.py --epocas 30 --batch_size 256 --lr 1e-3
+python run_experiments.py
 ```
 
 El mejor checkpoint se guarda en `models/ecg_clasificador.pt`.  
@@ -88,6 +88,12 @@ docker compose up --build
 # La API estará disponible en http://localhost:8000
 ```
 
+## Correr modelo
+Con la API desplegada en uvicorn
+```bash
+python src/probar_api.py
+```
+
 ---
 
 ## W&B
@@ -114,8 +120,6 @@ docker compose up --build
 
 ## Resultados
 Después de analizar los datos de todos los experimentos realizados, al ver la matriz de confusión normalizada de cada modelo, podemos definir que el modelo con mejor rendimiento es el modelo entrenado con arquitectura CNN a través de 15 épocas, con learning rate de 1e-3 y un weight decay de 1e-3. Este modelo, no solo es capaz de capturar las clases mayoritarias, sino que también muestra un rendimiento gran rendimiento en las clases minoritarias, lo que se refleja en una matriz de confusión más equilibrada.
-
-![Matriz de confusión con todos los modelos](images/wandb_conf_matrix.png)
 
 Los resultados obtenidos con este modelo son los siguientes:
 | Clase | Recall |
