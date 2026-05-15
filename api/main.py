@@ -7,10 +7,10 @@ from contextlib import asynccontextmanager
 from fastapi import FastAPI, HTTPException
 from pydantic import BaseModel, Field, field_validator
 
-from config import NOMBRES_CLASES, ConfigEntrenamiento
+from src.config import NOMBRES_CLASES, ConfigEntrenamiento
 cfg = ConfigEntrenamiento()
 
-from predict import cargar_modelo, predecir as clasificar_senal
+from src.predict import cargar_modelo, predecir as clasificar_senal
 
 _modelo = None
 

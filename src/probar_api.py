@@ -1,12 +1,14 @@
 import requests
 import pandas as pd
-
+import random
 import sys
 from pathlib import Path
 sys.path.insert(0, str(Path(__file__).parent))
 
-df = pd.read_csv("/data/mitbih_test.csv", header=None)
-fila = df.iloc[0]
+df = pd.read_csv(Path(__file__).parent.parent / "data" / "mitbih_test.csv", header=None)
+entry = random.randint(0, 21982)
+print(f"Fila: {entry} de test dataset\n")
+fila = df.iloc[entry]
 senal = fila.iloc[:187].tolist()
 clase_real = int(fila.iloc[187])
 

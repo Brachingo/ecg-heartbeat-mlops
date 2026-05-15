@@ -31,7 +31,7 @@ class ConfigEntrenamiento:
     wandb_entidad: str  = "brachi-upm"
     nombre_run: str = "run"
     artefacto_dataset: str = "mitbih:latest"
-    artefacto_modelo: str = "ecg_model:v0"
+    artefacto_modelo: str = "ecg-model-cnn-bal-15ep-wd1e3:v0"
 
 NOMBRES_CLASES = {
     0: "Normal",

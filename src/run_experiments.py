@@ -2,20 +2,20 @@ import subprocess
 import sys
 
 EXPERIMENTOS = [
-    # ── BASELINE: 2×2 (arquitectura × dataset, 20 épocas) ──────────────────
-    {"nombre": "cnn-orig-20ep",       "arquitectura": "CNN", "dataset": "mitbih:v0", "epocas": 20},
-    {"nombre": "cnn-bal-20ep",        "arquitectura": "CNN", "dataset": "mitbih:v1", "epocas": 20},
-    {"nombre": "gru-orig-20ep",       "arquitectura": "GRU", "dataset": "mitbih:v0", "epocas": 20},
-    {"nombre": "gru-bal-20ep",        "arquitectura": "GRU", "dataset": "mitbih:v1", "epocas": 20},
-    # ── MÁS ÉPOCAS: ¿sigue mejorando? ───────────────────────────────────────
-    {"nombre": "cnn-bal-30ep",        "arquitectura": "CNN", "dataset": "mitbih:v1", "epocas": 30},
-    {"nombre": "gru-bal-30ep",        "arquitectura": "GRU", "dataset": "mitbih:v1", "epocas": 30},
-    # ── LR MÁS BAJO: más pasos para converger bien (25 épocas) ─────────────
-    {"nombre": "cnn-bal-25ep-lr5e4",  "arquitectura": "CNN", "dataset": "mitbih:v1", "epocas": 25, "lr": 5e-4},
-    {"nombre": "gru-bal-25ep-lr5e4",  "arquitectura": "GRU", "dataset": "mitbih:v1", "epocas": 25, "lr": 5e-4},
-    # ── MÁS REGULARIZACIÓN: efecto visible rápido (15 épocas) ───────────────
-    {"nombre": "cnn-bal-15ep-wd1e3",  "arquitectura": "CNN", "dataset": "mitbih:v1", "epocas": 15, "weight_decay": 1e-3},
-    {"nombre": "gru-bal-15ep-wd1e3",  "arquitectura": "GRU", "dataset": "mitbih:v1", "epocas": 15, "weight_decay": 1e-3},
+    ###### Experimentos iniciales (20 épocas)
+    {"nombre": "cnn-orig-20ep", "arquitectura": "CNN", "dataset": "mitbih:v0", "epocas": 20},
+    {"nombre": "cnn-bal-20ep", "arquitectura": "CNN", "dataset": "mitbih:v1", "epocas": 20},
+    {"nombre": "gru-orig-20ep", "arquitectura": "GRU", "dataset": "mitbih:v0", "epocas": 20},
+    {"nombre": "gru-bal-20ep", "arquitectura": "GRU", "dataset": "mitbih:v1", "epocas": 20},
+    ###### (30 épocas)
+    {"nombre": "cnn-bal-30ep", "arquitectura": "CNN", "dataset": "mitbih:v1", "epocas": 30},
+    {"nombre": "gru-bal-30ep", "arquitectura": "GRU", "dataset": "mitbih:v1", "epocas": 30},
+    ###### (lr=5e-4)
+    {"nombre": "cnn-bal-25ep-lr5e4", "arquitectura": "CNN", "dataset": "mitbih:v1", "epocas": 25, "lr": 5e-4},
+    {"nombre": "gru-bal-25ep-lr5e4", "arquitectura": "GRU", "dataset": "mitbih:v1", "epocas": 25, "lr": 5e-4},
+    ###### (15 épocas y weight decay 1e-3)
+    {"nombre": "cnn-bal-15ep-wd1e3", "arquitectura": "CNN", "dataset": "mitbih:v1", "epocas": 15, "weight_decay": 1e-3},
+    {"nombre": "gru-bal-15ep-wd1e3", "arquitectura": "GRU", "dataset": "mitbih:v1", "epocas": 15, "weight_decay": 1e-3},
 ]
 
 

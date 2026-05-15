@@ -16,7 +16,7 @@ cliente = TestClient(app)
 SENAL_VALIDA = [0.0] * 187
 
 
-def test_health():
+def test_health( ):
     r = cliente.get("/health")
     assert r.status_code == 200
     assert r.json()["estado"] == "ok"

@@ -1,6 +1,6 @@
 # Clasificador de Latidos ECG — Proyecto Final MLOps
 
-**Autor:** Lucas Pérez  
+**Autor:** Lucas Silva (Brachi) y Víctor Méndez (Vicmen)
 **Máster:** Deep Learning — UPM  
 **Asignatura:** MLOps
 
@@ -93,7 +93,7 @@ docker compose up --build
 ## W&B
 
 - Proyecto: `ecg-heartbeat-mlops`  
-- Enlace: [W&B - Brachi-UPM](https://wandb.ai/brachi-upm/ecg-classification/artifacts/dataset/ecg-raw)
+- Enlace: [W&B - Brachi-UPM](https://wandb.ai/brachi-upm/ecg-classification-mlops/)
 
 ---
 
@@ -111,3 +111,19 @@ docker compose up --build
 ├── docker-compose.yml
 └── requirements.txt
 ```
+
+## Resultados
+Después de analizar los datos de todos los experimentos realizados, al ver la matriz de confusión normalizada de cada modelo, podemos definir que el modelo con mejor rendimiento es el modelo entrenado con arquitectura CNN a través de 15 épocas, con learning rate de 1e-3 y un weight decay de 1e-3. Este modelo, no solo es capaz de capturar las clases mayoritarias, sino que también muestra un rendimiento gran rendimiento en las clases minoritarias, lo que se refleja en una matriz de confusión más equilibrada.
+
+![Matriz de confusión con todos los modelos](images/wandb_conf_matrix.png)
+
+Los resultados obtenidos con este modelo son los siguientes:
+| Clase | Recall |
+|---------|-------|
+| Normal | 0.96 |
+| Supraventricular | 0.87 |
+| Ventricular | 0.96 |
+| Fusion | 0.90 |
+| Desconocido | 0.99 |
+
+Así que este modelo es el que se ha seleccionado para su despliegue en la API, ya que ofrece un rendimiento sólido en todas las clases, incluyendo las minoritarias, lo que es crucial para una aplicación clínica donde la detección precisa de arritmias es fundamental.

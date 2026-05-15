@@ -35,7 +35,7 @@ def descargar_modelo(model: str) -> Path:
     if not archivos:
         raise FileNotFoundError(f"No se encontró ningún archivo .pt en el artefacto descargado: {directorio_descarga}")
 
-    archivos[0].rename(ruta_destino)
+    archivos[0].replace(ruta_destino)
     return ruta_destino
 
 
